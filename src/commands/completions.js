@@ -15,7 +15,6 @@ const COMMANDS = [
   'doctor',
   'upgrade',
   'check',
-  'check-updates',
   'watch',
   'convert',
   'diff',
@@ -156,7 +155,7 @@ _rolecraft() {
   fi
 
   case "\${COMP_WORDS[1]}" in
-    install|bundle|use|setup|upgrade|check|check-updates)
+    install|bundle|use|setup|upgrade|check)
       COMPREPLY=($(compgen -W "$scope_flags $option_flags" -- "$cur"))
       ;;
     list) COMPREPLY=($(compgen -W "--json" -- "$cur")) ;;
@@ -213,7 +212,6 @@ _rolecraft() {
     'completions:Generate shell completion scripts'
     'upgrade:Upgrade rolecraft to latest version'
     'check:Check for available skill updates'
-    'check-updates:Alias for check'
     'watch:Watch skills and auto-sync changes'
     'convert:Convert another skill format to SKILL.md'
     'diff:Compare two skills'
@@ -241,7 +239,7 @@ _rolecraft() {
         mcp)
           _arguments '1:subcommand:(install list search check update remove)'
           ;;
-        install|bundle|use|setup|upgrade|check|check-updates)
+        install|bundle|use|setup|upgrade|check)
           _arguments \\
             '--global[Install to ~/.agents/skills/]' \\
             '--project[Install to ./.agents/skills/]' \\
@@ -377,7 +375,6 @@ complete -f -c rolecraft -n '__fish_rolecraft_needs_command' -a ci        -d 'CI
 complete -f -c rolecraft -n '__fish_rolecraft_needs_command' -a completions -d 'Generate completions'
 complete -f -c rolecraft -n '__fish_rolecraft_needs_command' -a upgrade    -d 'Upgrade to latest version'
 complete -f -c rolecraft -n '__fish_rolecraft_needs_command' -a check      -d 'Check for skill updates'
-complete -f -c rolecraft -n '__fish_rolecraft_needs_command' -a check-updates -d 'Alias for check'
 complete -f -c rolecraft -n '__fish_rolecraft_needs_command' -a watch      -d 'Watch skills and auto-sync'
 complete -f -c rolecraft -n '__fish_rolecraft_needs_command' -a convert    -d 'Convert a skill format'
 complete -f -c rolecraft -n '__fish_rolecraft_needs_command' -a diff       -d 'Compare two skills'
@@ -392,7 +389,7 @@ complete -f -c rolecraft -n '__fish_rolecraft_needs_command' -a help      -d 'Sh
 complete -f -c rolecraft -n '__fish_rolecraft_needs_command' -a version   -d 'Show version'
 
 # scope flags for install/bundle/use/setup
-for cmd in install bundle use setup upgrade check check-updates
+for cmd in install bundle use setup upgrade check
   complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l global         -d 'Install to ~/.agents/skills/'
   complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l project        -d 'Install to ./.agents/skills/'
   complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l claude         -d 'Install to ~/.claude/skills/'
@@ -482,22 +479,34 @@ for cmd in remove update watch convert
   complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l dry-run -d 'Preview without changes'
 end
 complete -f -c rolecraft -n '__fish_rolecraft_using_command agents-xml' -l write -d 'Write to AGENTS.md'
-for flag in json network deep
-  complete -f -c rolecraft -n '__fish_rolecraft_using_command doctor' -l $flag
-end
-for flag in json brief context no-color
-  complete -f -c rolecraft -n '__fish_rolecraft_using_command diff' -l $flag
-end
-for flag in chain output name dry-run force json no-color
-  complete -f -c rolecraft -n '__fish_rolecraft_using_command compose' -l $flag
-end
-for flag in all json verbose no-color no-emoji min-score only
-  complete -f -c rolecraft -n '__fish_rolecraft_using_command test' -l $flag
-end
-for flag in dry-run yes repo slug name
-  complete -f -c rolecraft -n '__fish_rolecraft_using_command publish' -l $flag
-end
-complete -f -c rolecraft -n '__fish_rolecraft_using_command publish' -s y -d 'Skip confirmation'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command doctor' -l json     -d 'Output structured JSON'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command doctor' -l network  -d 'Run network checks'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command doctor' -l deep     -d 'Run deep checks'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command diff' -l json     -d 'Output structured JSON'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command diff' -l brief    -d 'Show only a summary'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command diff' -l context  -d 'Context lines'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command diff' -l no-color -d 'Disable colors'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command compose' -l chain    -d 'Use override mode'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command compose' -l output   -d 'Write to file'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command compose' -s o        -d 'Write to file'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command compose' -l name     -d 'Set output skill name'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command compose' -l dry-run  -d 'Preview result'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command compose' -l force    -d 'Overwrite output'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command compose' -l json     -d 'Output structured JSON'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command compose' -l no-color -d 'Disable colors'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command test' -l all      -d 'Test all installed skills'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command test' -l json     -d 'Output structured JSON'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command test' -l verbose  -d 'Show details'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command test' -l no-color -d 'Disable colors'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command test' -l no-emoji -d 'Use ASCII fallbacks'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command test' -l min-score -d 'Minimum score'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command test' -l only     -d 'Checks to run'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command publish' -l dry-run -d 'Preview without publishing'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command publish' -l yes     -d 'Skip confirmation'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command publish' -s y       -d 'Skip confirmation'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command publish' -l repo    -d 'Associated repository'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command publish' -l slug    -d 'Override slug'
+complete -f -c rolecraft -n '__fish_rolecraft_using_command publish' -l name    -d 'Override name'
 complete -f -c rolecraft -n '__fish_rolecraft_using_command profile' -l yes -s y -d 'Skip confirmation'
 complete -f -c rolecraft -n '__fish_rolecraft_using_command profile' -l dry-run -d 'Preview without changes'
 
