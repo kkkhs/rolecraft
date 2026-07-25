@@ -3,6 +3,41 @@ import assert from 'node:assert/strict'
 
 let completionsModule
 
+const addedCommands = [
+  'check',
+  'watch',
+  'convert',
+  'diff',
+  'compose',
+  'test',
+  'publish',
+  'profile',
+]
+
+const addedLongFlags = [
+  'yes',
+  'no-mcp',
+  'list',
+  'skill',
+  'json',
+  'skills-sh',
+  'registry',
+  'network',
+  'deep',
+  'write',
+  'brief',
+  'context',
+  'chain',
+  'force',
+  'output',
+  'verbose',
+  'no-emoji',
+  'min-score',
+  'only',
+  'repo',
+  'slug',
+]
+
 before(async () => {
   completionsModule = await import('./completions.js')
 })
@@ -52,6 +87,15 @@ describe('completions command', () => {
         )
       },
     )
+    for (const value of [
+      ...addedCommands,
+      ...addedLongFlags.map((flag) => `--${flag}`),
+    ]) {
+      assert.ok(
+        output.includes(value),
+        `bash completions should include ${value}`,
+      )
+    }
   })
 
   it('generates zsh completions', async () => {
@@ -63,6 +107,15 @@ describe('completions command', () => {
     assert.ok(output.includes('#compdef rolecraft'))
     assert.ok(output.includes('_arguments'))
     assert.ok(output.includes('(install list search check update remove)'))
+    for (const value of [
+      ...addedCommands,
+      ...addedLongFlags.map((flag) => `--${flag}`),
+    ]) {
+      assert.ok(
+        output.includes(value),
+        `zsh completions should include ${value}`,
+      )
+    }
   })
 
   it('generates fish completions', async () => {
@@ -76,6 +129,18 @@ describe('completions command', () => {
     assert.ok(output.includes('Install an MCP server'))
     assert.ok(output.includes('Search for MCP servers'))
     assert.ok(output.includes('Check for MCP updates'))
+    for (const command of addedCommands) {
+      assert.ok(
+        output.includes(`-a ${command}`),
+        `fish completions should include ${command}`,
+      )
+    }
+    for (const flag of addedLongFlags) {
+      assert.ok(
+        output.includes(flag),
+        `fish completions should include --${flag}`,
+      )
+    }
   })
 
   it('errors on unknown shell', async () => {
