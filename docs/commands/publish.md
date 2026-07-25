@@ -22,7 +22,7 @@ When you publish via CLI:
 3. **Forks** the rolecraft-sh/registry repository (one-time setup, automatic).
 4. **Updates** `index.json` with a new entry.
 5. **Opens** a pull request via GitHub API.
-6. **Auto-merge** happens automatically once CI validation passes.
+6. A maintainer is **notified to merge** once CI validation passes.
 
 ### Option B: Manual PR (without CLI)
 
