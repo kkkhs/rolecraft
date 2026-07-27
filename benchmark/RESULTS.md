@@ -4,7 +4,7 @@
 >
 > **Environment:** Node.js v22.18.0, macOS
 > **Fixture (local):** SKILL.md + 1 JS file (2 files, 78 bytes)
-> **Fixture (GitHub):** [`sametcelikbicak/task-decomposer`](https://github.com/sametcelikbicak/task-decomposer)
+> **Fixture (GitHub):** [`rolecraft-sh/skills`](https://github.com/rolecraft-sh/skills)
 > **Iterations:** 10 per tool per scenario
 
 <p align="center">
@@ -21,7 +21,7 @@
 
 > `@agentskill.sh/cli` is marketplace-only and does not support local paths.
 
-## GitHub install (`sametcelikbicak/task-decomposer`)
+## GitHub install (`rolecraft-sh/skills`)
 
 | Tool | avg | min | max | p50 | vs rolecraft |
 |------|-----|-----|-----|-----|-------------|

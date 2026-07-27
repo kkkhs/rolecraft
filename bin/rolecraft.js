@@ -151,7 +151,7 @@ Examples:
   rolecraft publish ./my-skill --dry-run
   rolecraft publish ./my-skill --repo owner/repo
   rolecraft install ./my-skill
-  rolecraft install sametcelikbicak/task-decomposer
+  rolecraft install rolecraft-sh/skills
   rolecraft install npm:lodash
   rolecraft install npm:@scope/package@1.0.0
   rolecraft install ./skills/my-skill --claude --cursor

@@ -29,8 +29,7 @@ rolecraft install /absolute/path/to/skill
 Shorthand `owner/repo`:
 
 ```bash
-rolecraft install sametcelikbicak/task-decomposer
-rolecraft install sametcelikbicak/coverage-guard
+rolecraft install rolecraft-sh/skills
 rolecraft install mattpocock/skills
 ```
 
@@ -98,8 +97,8 @@ interactively to select which skills to install.
 # Install from local folder (default: project scope)
 rolecraft install ./my-skill
 
-# Install from GitHub
-rolecraft install sametcelikbicak/task-decomposer
+# Install from GitHub (monorepo)
+rolecraft install rolecraft-sh/skills
 
 # Install from a multi-skill repo (interactive selection)
 rolecraft install mattpocock/skills

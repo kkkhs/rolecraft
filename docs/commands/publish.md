@@ -126,7 +126,7 @@ rolecraft publish .
 rolecraft publish ./my-skill/
 
 # Specify the repo explicitly
-rolecraft publish ./my-skill --repo sametcelikbicak/my-skill
+rolecraft publish ./my-skill --repo rolecraft-sh/my-skill
 
 # Preview without publishing
 rolecraft publish ./my-skill --dry-run

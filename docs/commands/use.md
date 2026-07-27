@@ -30,7 +30,7 @@ For sources with multiple skills (e.g. `mattpocock/skills`), all skills are show
 rolecraft use ./my-skill
 
 # Preview a GitHub skill
-rolecraft use sametcelikbicak/task-decomposer
+rolecraft use rolecraft-sh/skills
 
 # List skills in a multi-skill source
 rolecraft use mattpocock/skills --list

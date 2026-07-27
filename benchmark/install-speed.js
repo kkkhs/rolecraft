@@ -6,7 +6,7 @@ import { resolveSource } from '../src/utils/resolver.js'
 import { installSkill } from '../src/utils/installer.js'
 
 const ITERATIONS = 10
-const GITHUB_SOURCE = 'sametcelikbicak/task-decomposer'
+const GITHUB_SOURCE = 'rolecraft-sh/skills'
 
 function createFixture(dir) {
   mkdirSync(dir, { recursive: true })
@@ -30,7 +30,7 @@ function cleanAgents() {
   for (const name of [
     'bench-skill',
     'task-decomposer',
-    'sametcelikbicak-task-decomposer',
+    'rolecraft-sh-skills',
   ]) {
     const p = join(process.env.HOME, '.agents', 'skills', name)
     try {

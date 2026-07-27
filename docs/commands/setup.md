@@ -47,7 +47,7 @@ Shows which agents are installed and how many skills each has.
 
 ```bash
 rolecraft setup ./my-skill
-rolecraft setup sametcelikbicak/task-decomposer
+rolecraft setup rolecraft-sh/skills
 rolecraft setup npm:@org/agent-rules
 ```
 
