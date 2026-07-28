@@ -156,7 +156,7 @@ Pass any of these to `install`, `setup`, or `profile` to target specific agents:
 | `--tiny-cloud` | tiny-cloud | `~/.tinycloud/skills/` |
 | `--zencoder` | zencoder | `~/.zencoder/skills/` |
 | `--codebuddy` | codebuddy | `~/.codebuddy/skills/` |
-| *(see [full list](agents) for all 87+ agents)* | | |
+| *(see [full list](agents) for all 86 agents)* | | |
 
 Combine multiple flags in one command:
 

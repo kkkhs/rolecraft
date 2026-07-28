@@ -23,10 +23,10 @@ features:
   - title: One-Command Onboarding
     details: "rolecraft setup <source> detects all AI agents and installs skills + MCP servers to every one of them."
   - title: Zero Dependencies
-    details: ~4 KB, no bloat. Only Node.js built-ins.
+    details: 87.4 kB, no bloat. Only Node.js built-ins.
   - title: MCP + Skills in One Command
     details: Install skills and their MCP servers together. No other CLI tool combines both.
-  - title: 87+ Agents
+  - title: 86 Agents
     details: opencode, claude-code, cursor, copilot, aider, devin, gemini-cli, and more.
   - title: Security Scoring
     details: Static analysis on install — detects prompt injection, command injection, obfuscated code.
