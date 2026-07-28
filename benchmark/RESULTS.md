@@ -9,7 +9,7 @@
 > **Date:** 2026-07-28
 
 <p align="center">
-  <img src="comparison.svg" alt="Benchmark comparison chart" width="800">
+  <img src="https://raw.githubusercontent.com/rolecraft-sh/rolecraft/main/benchmark/comparison.svg" alt="Benchmark comparison chart" width="800">
 </p>
 
 ## Local path install
