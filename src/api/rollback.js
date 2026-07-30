@@ -30,7 +30,8 @@ export async function apiRollback(slug, options = {}) {
 
   if (!globalEntry && !projectEntry) {
     throw new UserError(`Skill "${slug}" is not installed.`, {
-      suggestion: 'Use rolecraft list to see installed skills.',
+      suggestion:
+        'Use rolecraft list to see installed skills. Run rolecraft rollback --help for usage.',
       code: 'ROLLBACK_NOT_FOUND',
     })
   }

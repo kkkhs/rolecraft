@@ -147,4 +147,42 @@ describe('showError', () => {
     showError(outer)
     assert.ok(outputLines.some((l) => l.includes('inner failure')))
   })
+
+  it('formats full UserError (message + suggestion + detail + code) from registry-client', () => {
+    showError(
+      new UserError('"my-skill" blocked by security scan (score: 45/100).', {
+        suggestion: 'Review the flagged issues, fix them, or use --yes.',
+        detail: 'Flagged issues:\n  🔴 [critical] eval usage (src/index.js)',
+        code: 'SECURITY_DANGER',
+      }),
+    )
+    assert.ok(
+      outputLines.some(
+        (l) => l.includes('❌') && l.includes('blocked by security scan'),
+      ),
+    )
+    assert.ok(
+      outputLines.some(
+        (l) => l.includes('💡') && l.includes('Review the flagged issues'),
+      ),
+    )
+  })
+
+  it('suppresses detail and code in non-verbose mode', () => {
+    const origArgv = process.argv
+    process.argv = origArgv.filter((a) => a !== '--verbose')
+    try {
+      showError(
+        new UserError('Something failed', {
+          suggestion: 'Try again.',
+          detail: 'Secret detail',
+          code: 'TEST_ERR',
+        }),
+      )
+      assert.ok(!outputLines.some((l) => l.includes('Secret detail')))
+      assert.ok(!outputLines.some((l) => l.includes('TEST_ERR')))
+    } finally {
+      process.argv = origArgv
+    }
+  })
 })
