@@ -1,6 +1,6 @@
 import { readLock, getProjectLockPath } from '../utils/lockfile.js'
 
-export async function apiList(cwd, _options = {}) {
+export async function apiList(cwd, options = {}) {
   const [globalLock, projectLock] = await Promise.all([
     readLock(),
     cwd ? readLock(getProjectLockPath(cwd)) : Promise.resolve(null),
@@ -10,7 +10,20 @@ export async function apiList(cwd, _options = {}) {
   const mergedSkills = { ...globalLock.skills }
   if (projectLock) Object.assign(mergedSkills, projectLock.skills)
 
-  const skills = Object.entries(mergedSkills)
+  const requestedAgent = options.agent?.toLowerCase()
+  let displayAgent
+  const skills = Object.entries(mergedSkills).filter(([, entry]) => {
+    if (!requestedAgent || !Array.isArray(entry.agents)) {
+      return !requestedAgent
+    }
+
+    const match = entry.agents.find(
+      (agent) => agent.toLowerCase() === requestedAgent,
+    )
+    if (!match) return false
+    displayAgent ??= match
+    return true
+  })
   const result = {}
 
   for (const [slug, entry] of skills) {
@@ -34,5 +47,6 @@ export async function apiList(cwd, _options = {}) {
     total: skills.length,
     globals: Object.keys(globalLock.skills).length,
     projects: Object.keys(projectLock?.skills ?? {}).length,
+    agent: displayAgent ?? options.agent,
   }
 }

@@ -120,7 +120,7 @@ Usage:
   rolecraft bundle <source> [...]   Install skills from a file or inline sources
   rolecraft bundle create [<name>]  Create a new bundle file
   rolecraft use <source>            Preview a skill without installing
-  rolecraft list                    List installed skills (--json)
+  rolecraft list                    List installed skills (--json, --agent <name>)
   rolecraft remove <slug>           Remove a skill
   rolecraft update <slug>           Re-install a skill (update to latest)
   rolecraft rollback <slug>         Restore a skill to previous version
@@ -186,6 +186,9 @@ Options for test:
 Options for use:
   --list         List available skills from a source without previewing
   --skill <names> Preview specific skills by name (comma-separated)
+
+Options for list:
+  --agent, -a <name> Filter skills by installed agent
 
 Options for search:
   --interactive  Interactive TUI picker
@@ -281,7 +284,17 @@ const COMMANDS = {
       usage()
       return
     }
-    return listCommand(process.cwd(), { json: args.includes('--json') })
+    const agentIndex = args.findIndex(
+      (arg) => arg === '--agent' || arg === '-a',
+    )
+    const agent = agentIndex === -1 ? undefined : args[agentIndex + 1]
+    if (agentIndex !== -1 && (!agent || agent.startsWith('-'))) {
+      throw new Error('Missing agent name for --agent.')
+    }
+    return listCommand(process.cwd(), {
+      json: args.includes('--json'),
+      agent,
+    })
   },
 
   async remove(args) {

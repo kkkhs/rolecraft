@@ -6,12 +6,14 @@ import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { apiList } from './list.js'
 
-let tempDir, origHome
+let tempDir, origHome, origUserProfile
 
 before(async () => {
   tempDir = mkdtempSync(join(tmpdir(), 'rolecraft-api-list-test-'))
   origHome = process.env.HOME
+  origUserProfile = process.env.USERPROFILE
   process.env.HOME = tempDir
+  process.env.USERPROFILE = tempDir
   await mkdir(join(tempDir, '.agents'), { recursive: true })
   await writeFile(
     join(tempDir, '.agents', '.skill-lock.json'),
@@ -26,6 +28,7 @@ before(async () => {
 
 after(async () => {
   process.env.HOME = origHome
+  process.env.USERPROFILE = origUserProfile
   await rm(tempDir, { recursive: true, force: true })
 })
 
@@ -74,6 +77,31 @@ describe('api list', () => {
     assert.equal(result.skills['test/skill'].sourceType, 'github')
     assert.ok(result.skills['test/skill'].scope.includes('global'))
     assert.ok(result.globals >= 1)
+  })
+
+  it('filters by agent case-insensitively and preserves lockfile casing', async () => {
+    await writeFile(
+      join(tempDir, '.agents', '.skill-lock.json'),
+      JSON.stringify({
+        version: 3,
+        skills: {
+          'cursor/skill': { agents: ['Cursor'] },
+          'shared/skill': { agents: ['claude-code', 'cursor'] },
+          'claude/skill': { agents: ['claude-code'] },
+        },
+        dismissed: {},
+        lastSelectedAgents: [],
+      }),
+    )
+
+    const result = await apiList(tempDir, { agent: 'CURSOR' })
+
+    assert.deepEqual(Object.keys(result.skills), [
+      'cursor/skill',
+      'shared/skill',
+    ])
+    assert.equal(result.total, 2)
+    assert.equal(result.agent, 'Cursor')
   })
 
   it('merges global and project skills', async () => {
