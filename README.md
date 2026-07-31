@@ -426,6 +426,7 @@ Thanks to everyone who has contributed to RoleCraft:
   <tr>
       <td align="center"><a href="https://github.com/mgalore"><img src="https://github.com/mgalore.png" width="60" height="60" alt="mgalore"><br><b>Jonathan</b></a><br><sub><a href="https://github.com/rolecraft-sh/rolecraft/pull/171">Contributor</a></sub></td>
       <td align="center"><a href="https://github.com/MFA-G"><img src="https://github.com/MFA-G.png" width="60" height="60" alt="MFA-G"><br><b>Mochammad Fadhlan Al-Ghiffari</b></a><br><sub><a href="https://github.com/rolecraft-sh/rolecraft/pull/180">Contributor</a></sub></td>
+      <td align="center"><a href="https://github.com/adity982"><img src="https://github.com/adity982.png" width="60" height="60" alt="adity982"><br><b>ADITYA</b></a><br><sub><a href="https://github.com/rolecraft-sh/rolecraft/pull/158">Contributor</a></sub></td>
   </tr>
 </table>
 
