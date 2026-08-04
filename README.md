@@ -251,7 +251,7 @@ All API functions return plain objects (no side-effects). Available exports:
 
 | Command                                    | Description                                                                 | Details                              |
 | ------------------------------------------ | --------------------------------------------------------------------------- | ------------------------------------ |
-| `rolecraft init [<name>]` | Scaffold a new `SKILL.md` (`--template`, `--list`) | [docs](docs/commands/init.md)        |
+| `rolecraft init [<name>]`                  | Scaffold a new `SKILL.md` (`--template`, `--list`)                          | [docs](docs/commands/init.md)        |
 | `rolecraft install <source>`               | Install a skill with security scan (local path, GitHub/GitLab/SSH URL, npm) | [docs](docs/commands/install.md)     |
 | `rolecraft bundle <sources>`               | Install multiple skills from inline sources or file                         | [docs](docs/commands/bundle.md)      |
 | `rolecraft bundle create`                  | Create a new bundle file                                                    | [docs](docs/commands/bundle.md)      |
@@ -260,7 +260,7 @@ All API functions return plain objects (no side-effects). Available exports:
 | `rolecraft use <source>`                   | Preview a skill's files without installing                                  | [docs](docs/commands/use.md)         |
 | `rolecraft completions bash\|zsh\|fish`    | Generate shell completion scripts                                           | [docs](docs/commands/completions.md) |
 | `rolecraft setup [<source>]`               | Detect agents, optionally install a skill to all                            | [docs](docs/commands/setup.md)       |
-| `rolecraft list`                           | Show all installed skills (filter with `--agent`)                          | [docs](docs/commands/list.md)        |
+| `rolecraft list`                           | Show all installed skills (filter with `--agent`)                           | [docs](docs/commands/list.md)        |
 | `rolecraft doctor`                         | Run system health check                                                     | [docs](docs/commands/doctor.md)      |
 | `rolecraft agents-xml [--write]`           | Generate skills XML for AGENTS.md                                           | [docs](docs/commands/agents-xml.md)  |
 | `rolecraft mcp install/remove/list/search` | Install, remove, list, or search MCP servers for AI agents                  | [docs](docs/commands/mcp.md)         |
@@ -306,7 +306,7 @@ All API functions return plain objects (no side-effects). Available exports:
 | AGENTS.md XML generation             | ✅               | ❌              | ❌                  |
 | Self-upgrade command                 | ✅               | ❌              | ❌                  |
 | **Publish to registry**              | ✅               | ❌              | ❌                  |
-| File size                            | 87.4 kB | ~465 KB         | ~84 KB              |
+| File size                            | 87.4 kB          | ~465 KB         | ~84 KB              |
 
 [See full table →](docs/comparison.md)
 
@@ -427,6 +427,7 @@ Thanks to everyone who has contributed to RoleCraft:
       <td align="center"><a href="https://github.com/mgalore"><img src="https://github.com/mgalore.png" width="60" height="60" alt="mgalore"><br><b>Jonathan</b></a><br><sub><a href="https://github.com/rolecraft-sh/rolecraft/pull/171">Contributor</a></sub></td>
       <td align="center"><a href="https://github.com/MFA-G"><img src="https://github.com/MFA-G.png" width="60" height="60" alt="MFA-G"><br><b>Mochammad Fadhlan Al-Ghiffari</b></a><br><sub><a href="https://github.com/rolecraft-sh/rolecraft/pull/180">Contributor</a></sub></td>
       <td align="center"><a href="https://github.com/adity982"><img src="https://github.com/adity982.png" width="60" height="60" alt="adity982"><br><b>ADITYA</b></a><br><sub><a href="https://github.com/rolecraft-sh/rolecraft/pull/158">Contributor</a></sub></td>
+      <td align="center"><a href="https://github.com/canerbektas"><img src="https://github.com/canerbektas.png" width="60" height="60" alt="canerbektas"><br><b>Caner BEKTAŞ</b></a><br><sub><a href="https://github.com/rolecraft-sh/rolecraft/pull/206">Contributor</a></sub></td>
   </tr>
 </table>
 
