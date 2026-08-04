@@ -3,6 +3,7 @@ import { homedir } from 'node:os'
 import { readLock, getProjectLockPath } from '../utils/lockfile.js'
 import { resolveSource } from '../utils/resolver.js'
 import { installSkill } from '../utils/installer.js'
+import { createDebouncer, WATCH_DEBOUNCE_MS } from '../utils/debounce.js'
 import agents from '../agents.js'
 
 const agentNameToTarget = Object.fromEntries(
@@ -56,7 +57,7 @@ export async function watchApi(slug, cwd = process.cwd(), options = {}) {
     }
   }
 
-  const debounceTimers = {}
+  const debouncer = createDebouncer(WATCH_DEBOUNCE_MS)
   const watchers = []
 
   for (const s of watchSlugs) {
@@ -69,11 +70,9 @@ export async function watchApi(slug, cwd = process.cwd(), options = {}) {
       if (!filename || filename.startsWith('.')) return
 
       const key = `watch-${s}`
-      if (debounceTimers[key]) clearTimeout(debounceTimers[key])
-
-      debounceTimers[key] = setTimeout(async () => {
+      debouncer.schedule(key, async () => {
         await reinstallSkill(s, mergedSkills, cwd)
-      }, 300)
+      })
     }
 
     try {
