@@ -3,6 +3,7 @@ import { homedir } from 'node:os'
 import { readLock, getProjectLockPath } from '../utils/lockfile.js'
 import { resolveSource } from '../utils/resolver.js'
 import { installSkill } from '../utils/installer.js'
+import { createDebouncer, WATCH_DEBOUNCE_MS } from '../utils/debounce.js'
 import agents from '../agents.js'
 
 const agentNameToTarget = Object.fromEntries(
@@ -68,17 +69,14 @@ export async function watchCommand(slug, cwd = process.cwd(), options = {}) {
 
   console.log(`\n👀 Watching ${watchSlugs.length} skill(s) for changes...\n`)
 
-  const debounceTimers = {}
+  const debouncer = createDebouncer(WATCH_DEBOUNCE_MS)
   const watchers = []
   let closed = false
 
   function close() {
     if (closed) return
     closed = true
-    for (const key of Object.keys(debounceTimers)) {
-      clearTimeout(debounceTimers[key])
-      delete debounceTimers[key]
-    }
+    debouncer.cancelAll()
     for (const w of watchers) {
       try {
         w.close()
@@ -102,9 +100,7 @@ export async function watchCommand(slug, cwd = process.cwd(), options = {}) {
       if (!filename || filename.startsWith('.')) return
 
       const key = `watch-${s}`
-      if (debounceTimers[key]) clearTimeout(debounceTimers[key])
-
-      debounceTimers[key] = setTimeout(async () => {
+      debouncer.schedule(key, async () => {
         if (closed) return
         const timestamp = new Date().toLocaleTimeString()
         console.log(`  [${timestamp}] ${s}: ${filename} changed, syncing...`)
@@ -113,7 +109,7 @@ export async function watchCommand(slug, cwd = process.cwd(), options = {}) {
         console.log(
           `  [${timestamp}] ${s}: ${ok ? 'synced successfully' : 'sync failed'}`,
         )
-      }, 300)
+      })
     }
 
     try {
