@@ -6,6 +6,8 @@ import { createSpinner, createProgressBar } from './spinner.js'
 const origIsTTY = stdout.isTTY
 const origWrite = stdout.write
 const origColumns = stdout.columns
+const origLog = console.log
+const origError = console.error
 
 const calls = {
   logs: [],
@@ -33,6 +35,8 @@ afterEach(() => {
   stdout.isTTY = origIsTTY
   stdout.write = origWrite
   stdout.columns = origColumns
+  console.log = origLog
+  console.error = origError
 })
 
 describe('createSpinner', () => {
@@ -155,6 +159,15 @@ describe('createProgressBar', () => {
       bar.succeed()
       const out = calls.writes[calls.writes.length - 2]
       assert.ok(out.includes('100%'))
+    })
+
+    it('fail writes a cross mark', () => {
+      const bar = createProgressBar('download')
+      bar.start()
+      bar.fail()
+      const out = calls.writes[calls.writes.length - 1]
+      assert.ok(out.includes('✗'))
+      assert.ok(out.includes('download'))
     })
   })
 })
