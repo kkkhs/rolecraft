@@ -6,9 +6,11 @@ export function createDebouncer(waitMs) {
   function schedule(key, callback) {
     cancel(key)
 
-    const timer = setTimeout(async () => {
+    const timer = setTimeout(() => {
       timers.delete(key)
-      await callback()
+      void Promise.resolve()
+        .then(callback)
+        .catch(() => {})
     }, waitMs)
 
     timers.set(key, timer)

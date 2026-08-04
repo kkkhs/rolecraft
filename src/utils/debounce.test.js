@@ -56,4 +56,25 @@ describe('createDebouncer', () => {
 
     assert.deepEqual(calls, [])
   })
+
+  it('handles rejected async callbacks', async () => {
+    const debouncer = createDebouncer(10)
+    let unhandled = false
+    const onUnhandledRejection = () => {
+      unhandled = true
+    }
+
+    process.once('unhandledRejection', onUnhandledRejection)
+    try {
+      debouncer.schedule('skill', async () => {
+        throw new Error('callback failed')
+      })
+
+      await wait(30)
+
+      assert.equal(unhandled, false)
+    } finally {
+      process.removeListener('unhandledRejection', onUnhandledRejection)
+    }
+  })
 })
