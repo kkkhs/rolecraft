@@ -432,9 +432,9 @@ All contributions are tracked automatically by GitHub — the list below stays i
 
 <table style="width:100%; border-collapse:collapse; margin-top:1rem;">
   <tr>
-    <td style="width:130px; vertical-align:top; text-align:center; padding-right:1rem;">
+    <td style="width:120px; vertical-align:middle; text-align:center; padding-right:1rem;">
       <a href="https://github.com/yukidev630">
-        <img src="https://github.com/yukidev630.png?size=120" alt="yukidev630" height="100" width="100" style="border-radius: 50%; border: 2px solid #31d583;">
+        <img src="https://github.com/yukidev630.png?size=100" alt="yukidev630" height="80" width="80" style="border-radius: 50%; border: 2px solid #31d583;">
       </a>
       <br>
       <span style="font-weight:bold">yukidev630</span>
@@ -444,9 +444,9 @@ All contributions are tracked automatically by GitHub — the list below stays i
     </td>
   </tr>
   <tr>
-    <td style="width:130px; vertical-align:top; text-align:center; padding-right:1rem;">
+    <td style="width:120px; vertical-align:middle; text-align:center; padding-right:1rem;">
       <a href="https://github.com/BenjaminAyivoh1">
-        <img src="https://github.com/BenjaminAyivoh1.png?size=120" alt="BenjaminAyivoh1" height="100" width="100" style="border-radius: 50%; border: 2px solid #31d583;">
+        <img src="https://github.com/BenjaminAyivoh1.png?size=100" alt="BenjaminAyivoh1" height="80" width="80" style="border-radius: 50%; border: 2px solid #31d583;">
       </a>
       <br>
       <span style="font-weight:bold">BenjaminAyivoh1</span>
@@ -456,9 +456,9 @@ All contributions are tracked automatically by GitHub — the list below stays i
     </td>
   </tr>
   <tr>
-    <td style="width:130px; vertical-align:top; text-align:center; padding-right:1rem;">
+    <td style="width:120px; vertical-align:middle; text-align:center; padding-right:1rem;">
       <a href="https://github.com/linhaixin45-cmyk">
-        <img src="https://github.com/linhaixin45-cmyk.png?size=120" alt="linhaixin45-cmyk" height="100" width="100" style="border-radius: 50%; border: 2px solid #31d583;">
+        <img src="https://github.com/linhaixin45-cmyk.png?size=100" alt="linhaixin45-cmyk" height="80" width="80" style="border-radius: 50%; border: 2px solid #31d583;">
       </a>
       <br>
       <span style="font-weight:bold">linhaixin45-cmyk</span>
