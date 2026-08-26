@@ -1,7 +1,9 @@
 import { describe, it, before } from 'node:test'
 import assert from 'node:assert/strict'
+import AGENTS_DATA from '../agents.js'
 
 let completionsModule
+let completionsApi
 
 const addedCommands = [
   'agents',
@@ -42,6 +44,7 @@ const addedLongFlags = [
 
 before(async () => {
   completionsModule = await import('./completions.js')
+  completionsApi = await import('../api/completions.js')
 })
 
 function capture(name) {
@@ -55,6 +58,21 @@ function capture(name) {
     restore: () => {
       console[name] = orig
     },
+  }
+}
+
+function assertIncludesAgentScopes(output, shell) {
+  for (const { flag, label } of AGENTS_DATA) {
+    const option = shell === 'fish' ? `-l ${flag}` : `--${flag}`
+    assert.ok(
+      output.includes(option),
+      `${shell} completions should include ${option}`,
+    )
+    if (shell === 'bash') continue
+    assert.ok(
+      output.includes(label),
+      `${shell} completions should include ${flag} label ${label}`,
+    )
   }
 }
 
@@ -98,6 +116,7 @@ describe('completions command', () => {
         `bash completions should include ${value}`,
       )
     }
+    assertIncludesAgentScopes(output, 'bash')
   })
 
   it('generates zsh completions', async () => {
@@ -118,6 +137,7 @@ describe('completions command', () => {
         `zsh completions should include ${value}`,
       )
     }
+    assertIncludesAgentScopes(output, 'zsh')
   })
 
   it('generates fish completions', async () => {
@@ -143,6 +163,7 @@ describe('completions command', () => {
         `fish completions should include --${flag}`,
       )
     }
+    assertIncludesAgentScopes(output, 'fish')
   })
 
   it('errors on unknown shell', async () => {
@@ -152,5 +173,20 @@ describe('completions command', () => {
       /Unknown shell: tcsh/,
     )
     restore()
+  })
+
+  it('uses the command generators for the public API', () => {
+    assert.equal(
+      completionsApi.completionApi('bash'),
+      completionsModule.bashScript(),
+    )
+    assert.equal(
+      completionsApi.completionApi('zsh'),
+      completionsModule.zshScript(),
+    )
+    assert.equal(
+      completionsApi.completionApi('fish'),
+      completionsModule.fishScript(),
+    )
   })
 })

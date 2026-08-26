@@ -1,3 +1,5 @@
+import AGENTS_DATA from '../agents.js'
+
 const COMMANDS = [
   'install',
   'bundle',
@@ -31,76 +33,30 @@ const COMMANDS = [
 
 const MCP_SUBCOMMANDS = 'install list search check update remove'
 
-const SCOPE_FLAGS = [
-  '--global',
-  '--project',
-  '--claude',
-  '--cursor',
-  '--windsurf',
-  '--devin',
-  '--codex',
-  '--copilot',
-  '--aider',
-  '--cline',
-  '--gemini',
-  '--cody',
-  '--continue',
-  '--warp',
-  '--codeium',
-  '--fabric',
-  '--goose',
-  '--tabnine',
-  '--supermaven',
-  '--pr-pilot',
-  '--loom',
-  '--roo',
-  '--trae',
-  '--hermes',
-  '--kiro',
-  '--augment',
-  '--kilo',
-  '--openhands',
-  '--junie',
-  '--factory',
-  '--command-code',
-  '--cortex',
-  '--mistral-vibe',
-  '--qwen-code',
-  '--openclaw',
-  '--codebuddy',
-  '--mux',
-  '--pi',
-  '--autohand-code',
-  '--rovo',
-  '--firebender',
-  '--bob',
-  '--aider-desk',
-  '--zap',
-  '--codeep',
-  '--kimi-code',
-  '--zcode',
-  '--amp',
-  '--antigravity',
-  '--antigravity-cli',
-  '--deepagents',
-  '--dexto',
-  '--loaf',
-  '--replit',
-  '--zed',
-  '--promptscript',
-  '--astrbot',
-  '--qoder-cn',
-  '--trae-cn',
-  '--zenflow',
-  '--neovate',
-  '--pochi',
-  '--adal',
-  '--droid',
-  '--chatgpt',
-  '--codearts-agent',
-  '--universal',
-  '--all',
+const SCOPE_OPTIONS = [
+  {
+    flag: 'global',
+    zshDescription: 'Install to ~/.agents/skills/',
+    fishDescription: 'Install to ~/.agents/skills/',
+  },
+  {
+    flag: 'project',
+    zshDescription: 'Install to ./.agents/skills/',
+    fishDescription: 'Install to ./.agents/skills/',
+  },
+  ...AGENTS_DATA.map(({ flag, label }) => ({
+    flag,
+    zshDescription: `Also install to ${label}`,
+    fishDescription: `Install to ${label}`,
+  })),
+  {
+    flag: 'all',
+    zshDescription: 'Install to all locations',
+    fishDescription: 'Install to all locations',
+  },
 ]
+
+const SCOPE_FLAGS = SCOPE_OPTIONS.map(({ flag }) => `--${flag}`)
 
 const OPTION_FLAGS = [
   '--dry-run',
@@ -135,7 +91,20 @@ const OPTION_FLAGS = [
   '--slug',
 ]
 
-function bashScript() {
+function zshScopeArguments() {
+  return SCOPE_OPTIONS.map(
+    ({ flag, zshDescription }) => `            '--${flag}[${zshDescription}]' \\`,
+  ).join('\n')
+}
+
+function fishScopeArguments() {
+  return SCOPE_OPTIONS.map(
+    ({ flag, fishDescription }) =>
+      `  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l ${flag} -d '${fishDescription}'`,
+  ).join('\n')
+}
+
+export function bashScript() {
   const C = COMMANDS.join(' ')
   const S = SCOPE_FLAGS.join(' ')
   const O = OPTION_FLAGS.join(' ')
@@ -194,7 +163,7 @@ complete -F _rolecraft rolecraft
 `
 }
 
-function zshScript() {
+export function zshScript() {
   return `#compdef rolecraft
 # Source: rolecraft completions zsh
 # Install: source <(rolecraft completions zsh)
@@ -247,59 +216,7 @@ _rolecraft() {
           ;;
         install|bundle|use|setup|upgrade|check)
           _arguments \\
-            '--global[Install to ~/.agents/skills/]' \\
-            '--project[Install to ./.agents/skills/]' \\
-            '--claude[Also install to ~/.claude/skills/]' \\
-            '--cursor[Also install to ~/.cursor/skills/]' \\
-            '--windsurf[Also install to ~/.codeium/windsurf/skills/]' \\
-            '--devin[Also install to ./.devin/skills/]' \\
-            '--codex[Also install to ~/.agents/skills/]' \\
-            '--copilot[Also install to ./.github/skills/]' \\
-            '--aider[Also install to ~/.aider/skills/]' \\
-            '--cline[Also install to ~/.cline/skills/]' \\
-            '--gemini[Also install to ~/.gemini/skills/]' \\
-            '--cody[Also install to ~/.cody/skills/]' \\
-            '--continue[Also install to ~/.continue/skills/]' \\
-            '--warp[Also install to ~/.agents/skills/]' \\
-            '--codeium[Also install to ~/.codeium/skills/]' \\
-            '--fabric[Also install to ~/.fabric/skills/]' \\
-            '--goose[Also install to ~/.agents/skills/]' \\
-            '--tabnine[Also install to ~/.tabnine/agent/skills/]' \\
-            '--supermaven[Also install to ~/.supermaven/skills/]' \\
-            '--pr-pilot[Also install to ~/.pr-pilot/skills/]' \\
-            '--loom[Also install to ~/.loom/skills/]' \\
-            '--roo[Also install to ~/.roo/skills/]' \\
-            '--trae[Also install to ~/.trae/skills/]' \\
-            '--hermes[Also install to ~/.hermes/skills/]' \\
-            '--kiro[Also install to ~/.kiro/skills/]' \\
-            '--augment[Also install to ~/.augment/skills/]' \\
-            '--kilo[Also install to ~/.kilo/skills/]' \\
-            '--openhands[Also install to ~/.agents/skills/]' \\
-            '--junie[Also install to ~/.junie/skills/]' \\
-             '--factory[Also install to ~/.factory/skills/]' \\
-             '--command-code[Also install to ~/.commandcode/skills/]' \\
-             '--cortex[Also install to ~/.snowflake/cortex/skills/]' \\
-             '--mistral-vibe[Also install to ~/.vibe/skills/]' \\
-             '--qwen-code[Also install to ~/.qwen/skills/]' \\
-             '--openclaw[Also install to ~/.openclaw/skills/]' \\
-             '--codebuddy[Also install to ~/.codebuddy/skills/]' \\
-             '--mux[Also install to ~/.mux/skills/]' \\
-              '--pi[Also install to ~/.pi/agent/skills/]' \\
-              '--omp[Also install to ~/.omp/agent/skills/]' \\
-             '--autohand-code[Also install to ~/.autohand/skills/]' \\
-             '--rovo[Also install to ~/.rovodev/skills/]' \\
-             '--firebender[Also install to ~/.firebender/skills/]' \\
-             '--bob[Also install to ~/.bob/skills/]' \\
-            '--aider-desk[Also install to ~/.aider-desk/skills/]' \\
-            '--zap[Also install to ~/.zap/skills/]' \\
-            '--codeep[Also install to ~/.codeep/skills/]' \\
-            '--kimi-code[Also install to ~/.kimi-code/skills/]' \\
-             '--zcode[Also install to ~/.zcode/skills/]' \\
-             '--droid[Also install to ~/.droid/skills/]' \\
-             '--chatgpt[Also install to ~/.agents/skills/]' \\
-             '--codearts-agent[Also install to ~/.codeartsdoer/skills/]' \\
-             '--universal[Also install to ~/.config/agents/skills/]' \\
-             '--all[Install to all locations]' \\
+${zshScopeArguments()}
             '--dry-run[Preview without copying]' \\
             '--frozen-lockfile[Fail if already installed]' \\
             '--symlink[Install as symlink]' \\
@@ -344,7 +261,7 @@ _rolecraft "$@"
 `
 }
 
-function fishScript() {
+export function fishScript() {
   return `# rolecraft fish completion
 # Source: rolecraft completions fish
 # Install: rolecraft completions fish | source
@@ -399,59 +316,7 @@ complete -f -c rolecraft -n '__fish_rolecraft_needs_command' -a version   -d 'Sh
 
 # scope flags for install/bundle/use/setup
 for cmd in install bundle use setup upgrade check
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l global         -d 'Install to ~/.agents/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l project        -d 'Install to ./.agents/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l claude         -d 'Install to ~/.claude/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l cursor         -d 'Install to ~/.cursor/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l windsurf       -d 'Install to ~/.codeium/windsurf/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l devin          -d 'Install to ./.devin/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l codex          -d 'Install to ~/.agents/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l copilot        -d 'Install to ./.github/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l aider          -d 'Install to ~/.aider/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l cline          -d 'Install to ~/.cline/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l gemini         -d 'Install to ~/.gemini/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l cody           -d 'Install to ~/.cody/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l continue       -d 'Install to ~/.continue/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l warp           -d 'Install to ~/.agents/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l codeium        -d 'Install to ~/.codeium/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l fabric         -d 'Install to ~/.fabric/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l goose          -d 'Install to ~/.agents/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l tabnine        -d 'Install to ~/.tabnine/agent/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l supermaven     -d 'Install to ~/.supermaven/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l pr-pilot       -d 'Install to ~/.pr-pilot/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l loom           -d 'Install to ~/.loom/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l roo            -d 'Install to ~/.roo/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l trae           -d 'Install to ~/.trae/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l hermes         -d 'Install to ~/.hermes/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l kiro           -d 'Install to ~/.kiro/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l augment        -d 'Install to ~/.augment/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l kilo           -d 'Install to ~/.kilo/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l openhands      -d 'Install to ~/.agents/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l junie          -d 'Install to ~/.junie/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l factory        -d 'Install to ~/.factory/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l command-code    -d 'Install to ~/.commandcode/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l cortex          -d 'Install to ~/.snowflake/cortex/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l mistral-vibe    -d 'Install to ~/.vibe/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l qwen-code       -d 'Install to ~/.qwen/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l openclaw        -d 'Install to ~/.openclaw/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l codebuddy       -d 'Install to ~/.codebuddy/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l mux             -d 'Install to ~/.mux/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l pi              -d 'Install to ~/.pi/agent/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l omp             -d 'Install to ~/.omp/agent/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l autohand-code   -d 'Install to ~/.autohand/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l rovo            -d 'Install to ~/.rovodev/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l firebender      -d 'Install to ~/.firebender/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l bob             -d 'Install to ~/.bob/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l aider-desk      -d 'Install to ~/.aider-desk/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l zap             -d 'Install to ~/.zap/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l codeep          -d 'Install to ~/.codeep/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l kimi-code       -d 'Install to ~/.kimi-code/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l zcode           -d 'Install to ~/.zcode/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l droid           -d 'Install to ~/.droid/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l chatgpt         -d 'Install to ~/.agents/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l codearts-agent  -d 'Install to ~/.codeartsdoer/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l universal       -d 'Install to ~/.config/agents/skills/'
-  complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l all            -d 'Install to all locations'
+${fishScopeArguments()}
   complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l dry-run        -d 'Preview without copying'
   complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l frozen-lockfile -d 'Fail if already installed'
   complete -f -c rolecraft -n "__fish_rolecraft_using_command $cmd" -l symlink        -d 'Install as symlink'
