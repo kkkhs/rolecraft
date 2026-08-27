@@ -1,8 +1,4 @@
-import {
-  bashScript,
-  fishScript,
-  zshScript,
-} from '../commands/completions.js'
+import { bashScript, fishScript, zshScript } from '../commands/completions.js'
 
 export function completionApi(shell) {
   switch (shell) {

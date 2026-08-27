@@ -93,7 +93,8 @@ const OPTION_FLAGS = [
 
 function zshScopeArguments() {
   return SCOPE_OPTIONS.map(
-    ({ flag, zshDescription }) => `            '--${flag}[${zshDescription}]' \\`,
+    ({ flag, zshDescription }) =>
+      `            '--${flag}[${zshDescription}]' \\`,
   ).join('\n')
 }
 
