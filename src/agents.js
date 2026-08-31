@@ -58,13 +58,12 @@ const AGENTS_DATA = [
     mcpSupport: {
       supported: true,
       format: 'mcpServers',
-      configPath: '~/.cursor/mcp_config.json',
+      configPath: '~/.cursor/mcp.json',
     },
     instructionFormat: 'skill-md',
     supportLevel: 'verified',
     docUrl: 'https://cursor.com/docs',
     lastVerified: '2026-07-22',
-    mcpPath: '~/.cursor/mcp.json',
   },
   {
     flag: 'windsurf',
