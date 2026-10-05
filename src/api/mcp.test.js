@@ -136,12 +136,35 @@ describe('api mcp install/list/update/remove', () => {
         },
       ],
       total: 2,
+      unreadable: [],
     })
+  })
+
+  it('keeps listing when one agent config is unreadable', async () => {
+    // agents has a good config, cursor's is truncated JSON
+    await mkdir(join(tempDir, '.agents'), { recursive: true })
+    await mkdir(join(tempDir, '.cursor'), { recursive: true })
+    await writeFile(
+      join(tempDir, '.agents', 'mcp.json'),
+      JSON.stringify({
+        mcpServers: { good: { command: 'npx', args: ['-y', '@test/good'] } },
+      }),
+    )
+    await writeFile(join(tempDir, '.cursor', 'mcp.json'), '{"mcpServers": {')
+
+    const result = await apiMcpList({ agents: ['agents', 'cursor'] })
+
+    assert.equal(result.total, 1)
+    assert.equal(result.servers[0].agent, 'agents')
+    assert.equal(result.servers[0].name, 'good')
+    assert.equal(result.unreadable.length, 1)
+    assert.equal(result.unreadable[0].agent, 'cursor')
+    assert.match(result.unreadable[0].error.message, /not valid JSON/)
   })
 
   it('returns an empty list when no servers are configured', async () => {
     const result = await apiMcpList({ agents: ['agents'] })
-    assert.deepEqual(result, { servers: [], total: 0 })
+    assert.deepEqual(result, { servers: [], total: 0, unreadable: [] })
   })
 
   it('updates an existing server to the new resolved source', async () => {

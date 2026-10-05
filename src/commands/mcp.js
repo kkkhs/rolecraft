@@ -88,6 +88,14 @@ export async function mcpInstallCommand(source, options) {
 export async function mcpListCommand(options) {
   const result = await apiMcpList(options)
 
+  // Listing is read-only, so an unreadable config is reported and skipped
+  // rather than aborting the whole table. The exit code still says the command
+  // did not fully succeed — a partial list must not read as a clean one.
+  for (const { agent, error } of result.unreadable || []) {
+    console.error(`\n❌ ${agent}: ${error.message}`)
+    process.exitCode = 1
+  }
+
   if (result.total === 0) {
     console.log('No MCP servers configured.')
     return
