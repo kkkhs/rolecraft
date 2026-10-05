@@ -4,7 +4,10 @@ import { createInterface as defaultCreateInterface } from 'node:readline'
 import { stdin as input, stdout as output } from 'node:process'
 import { resolveSkills } from '../utils/resolver.js'
 import { installSkill } from '../utils/installer.js'
-import { assertSkillScanAllowed } from '../utils/scan-gate.js'
+import {
+  assertMcpScanAllowed,
+  assertSkillScanAllowed,
+} from '../utils/scan-gate.js'
 import {
   parseMcpServersFromSkill,
   resolveMcpSource,
@@ -226,6 +229,10 @@ export async function setupCommand(source, options = {}) {
             .map((a) => a.flag)
           for (const server of mcpServers) {
             const resolvedMcp = await resolveMcpSource(server.source)
+            assertMcpScanAllowed(resolvedMcp, {
+              ...options,
+              name: server.name,
+            })
             let installedCount = 0
             for (const agent of mcpTargets) {
               const ok = await addMcpServer(agent, server.name, resolvedMcp)

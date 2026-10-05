@@ -81,10 +81,12 @@ export function assertMcpScanAllowed(resolved, options = {}) {
 
   const blocked =
     classifyScore(scanResult.score, scanResult.issues) === 'danger'
+  const subject = options.name ? `MCP server "${options.name}"` : 'MCP server'
+
   throw new UserError(
     blocked
-      ? `MCP server blocked by security scan (score: ${scanResult.score}/100).`
-      : `MCP server needs security review (score: ${scanResult.score}/100).`,
+      ? `${subject} blocked by security scan (score: ${scanResult.score}/100).`
+      : `${subject} needs security review (score: ${scanResult.score}/100).`,
     {
       suggestion:
         'Review the flagged issues, then use --yes (API: yes:true) to approve the install.',
