@@ -11,7 +11,7 @@ The scanner runs on every path that installs a skill. A skill that scores DANGER
 | `rolecraft install` | yes | yes |
 | `rolecraft bundle` | yes | yes |
 | `rolecraft update` | yes | n/a |
-| `rolecraft setup` | yes | **no** — see below |
+| `rolecraft setup` | yes | yes |
 | `rolecraft search --interactive` | yes | n/a |
 | `rolecraft watch` (auto-sync) | yes | n/a |
 | `rolecraft ci` | yes | yes |
@@ -20,9 +20,8 @@ The scanner runs on every path that installs a skill. A skill that scores DANGER
 | `rolecraft use` | preview only, writes nothing | n/a |
 | any command with `--dry-run` | **no** — it resolves and reports, then exits before the scan | no |
 
-Two gaps are known and unfixed:
+One gap is known and unfixed:
 
-- **`rolecraft setup` does not scan MCP servers declared inside a skill.** The skill itself is scanned; the `mcp_servers` block it carries is written to each agent config unchecked. `rolecraft install` scans that block. Prefer `install` when the skill declares MCP servers.
 - **`--dry-run` does not scan.** It reports what it found without scoring it, so a dry run cannot tell you whether the install would be refused.
 
 ## What this does not catch

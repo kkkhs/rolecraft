@@ -4,6 +4,7 @@ import {
   existsSync,
   mkdtempSync,
   mkdirSync,
+  readFileSync,
   writeFileSync,
   rmSync,
 } from 'node:fs'
@@ -79,6 +80,24 @@ describe('setup command', () => {
     )
   }
 
+  const mcpSkill = (dir, name, source) => {
+    mkdirSync(dir, { recursive: true })
+    writeFileSync(
+      join(dir, 'SKILL.md'),
+      [
+        '---',
+        `slug: test/${name}`,
+        `name: ${name}`,
+        'owner: tester',
+        'mcp_servers:',
+        `  - name: ${name}-mcp`,
+        `    source: ${source}`,
+        '---',
+        '# MCP setup test',
+      ].join('\n'),
+    )
+  }
+
   it('refuses a skill the security scan blocks', async () => {
     await withIsolatedGate(async ({ home, cwd }) => {
       mkdirSync(join(home, '.agents', 'skills'), { recursive: true })
@@ -112,6 +131,51 @@ describe('setup command', () => {
         assert.ok(
           existsSync(join(home, '.agents', 'skills', 'test-setup-gate-yes')),
         )
+      } finally {
+        restoreLog()
+      }
+    })
+  })
+
+  it('refuses skill-declared MCP servers that need review', async () => {
+    await withIsolatedGate(async ({ home, cwd }) => {
+      mkdirSync(join(home, '.agents', 'skills'), { recursive: true })
+      const dir = join(cwd, 'setup-mcp-review')
+      mcpSkill(dir, 'setup-mcp-review', 'npm:unscanned-setup-mcp')
+
+      capture()
+      try {
+        await assert.rejects(
+          () => setupModule.setupCommand(dir, { yes: false }),
+          (error) => {
+            assert.equal(error.userCode, 'MCP_SECURITY_REVIEW')
+            assert.match(error.message, /setup-mcp-review-mcp/)
+            return true
+          },
+        )
+        assert.ok(!existsSync(join(home, '.agents', 'mcp.json')))
+      } finally {
+        restoreLog()
+      }
+    })
+  })
+
+  it('installs skill-declared MCP servers when --yes approves review', async () => {
+    await withIsolatedGate(async ({ home, cwd }) => {
+      mkdirSync(join(home, '.agents', 'skills'), { recursive: true })
+      const dir = join(cwd, 'setup-mcp-yes')
+      mcpSkill(dir, 'setup-mcp-yes', 'npm:unscanned-setup-mcp')
+
+      capture()
+      try {
+        await setupModule.setupCommand(dir, { yes: true })
+        const config = JSON.parse(
+          readFileSync(join(home, '.agents', 'mcp.json'), 'utf-8'),
+        )
+        assert.deepEqual(config.mcpServers['setup-mcp-yes-mcp'], {
+          command: 'npx',
+          args: ['-y', 'unscanned-setup-mcp'],
+        })
       } finally {
         restoreLog()
       }
