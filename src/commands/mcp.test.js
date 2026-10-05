@@ -1,4 +1,4 @@
-import { describe, it, before, after } from 'node:test'
+import { describe, it, before, after, afterEach } from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdtempSync, existsSync, readFileSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
@@ -26,6 +26,13 @@ before(async () => {
 })
 
 describe('mcp command', () => {
+  // mcpListCommand sets process.exitCode when an agent config is unreadable.
+  // Reset it here or the whole test file exits non-zero and node --test reports
+  // the file as failed even though every case passed.
+  afterEach(() => {
+    process.exitCode = 0
+  })
+
   describe('mcpInstallCommand', () => {
     it(
       'installs MCP server from npm: source',
@@ -146,6 +153,41 @@ describe('mcp command', () => {
         restore()
 
         assert.ok(logs.some((l) => l.includes('No MCP servers configured')))
+      }),
+    )
+
+    it(
+      'reports an unreadable config and still lists the rest',
+      withTempDir(async () => {
+        const addModule = await import('../utils/mcp.js')
+        await addModule.addMcpServer('agents', 'still-listed', {
+          command: 'npx',
+          args: ['-y', '@test/ok'],
+        })
+        const { writeFileSync, mkdirSync } = await import('node:fs')
+        mkdirSync(join(process.env.HOME, '.cursor'), { recursive: true })
+        writeFileSync(
+          join(process.env.HOME, '.cursor', 'mcp.json'),
+          '{"mcpServers": {',
+        )
+
+        const { logs, restore } = capture('log')
+        const errorCapture = capture('error')
+        await mcpModule.mcpListCommand({ agents: ['agents', 'cursor'] })
+        restore()
+        errorCapture.restore()
+
+        assert.ok(
+          errorCapture.logs.some(
+            (l) => l.includes('cursor') && l.includes('not valid JSON'),
+          ),
+          `expected the corrupt config to be reported: ${errorCapture.logs.join('; ')}`,
+        )
+        assert.ok(
+          logs.some((l) => l.includes('still-listed')),
+          'the healthy agent must still be listed',
+        )
+        assert.equal(process.exitCode, 1, 'a partial listing must not exit 0')
       }),
     )
 

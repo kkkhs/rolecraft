@@ -62,12 +62,22 @@ export async function apiMcpList(options = {}) {
       : getSupportedMcpAgents()
 
   const all = []
+  const unreadable = []
+
   for (const agent of targets) {
-    const servers = await listMcpServers(agent)
-    for (const s of servers)
-      all.push({ agent, name: s.name, command: s.command, args: s.args })
+    // One agent's config being unreadable must not hide every other agent's
+    // servers. Collect the failure and keep listing, so the result is partial
+    // but the reason for the gap is reported.
+    try {
+      const servers = await listMcpServers(agent)
+      for (const s of servers)
+        all.push({ agent, name: s.name, command: s.command, args: s.args })
+    } catch (error) {
+      unreadable.push({ agent, error })
+    }
   }
-  return { servers: all, total: all.length }
+
+  return { servers: all, total: all.length, unreadable }
 }
 
 export async function apiMcpUpdate(source, options = {}) {
