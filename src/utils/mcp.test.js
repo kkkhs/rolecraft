@@ -206,6 +206,26 @@ describe('mcp', () => {
       )
       assert.equal(success, false)
     })
+
+    it(
+      'refuses to overwrite a corrupt existing config',
+      withTempDir(async () => {
+        const configPath = join(process.env.HOME, '.agents', 'mcp.json')
+        const corrupt = '{"mcpServers": {'
+        mkdirSync(join(process.env.HOME, '.agents'), { recursive: true })
+        writeFileSync(configPath, corrupt)
+
+        await assert.rejects(
+          () =>
+            mcpModule.addMcpServer('agents', 'safe-server', {
+              command: 'npx',
+              args: ['-y', '@test/server'],
+            }),
+          (error) => error.userCode === 'MCP_CONFIG_CORRUPT',
+        )
+        assert.equal(readFileSync(configPath, 'utf-8'), corrupt)
+      }),
+    )
   })
 
   describe('updateMcpServer', () => {
@@ -757,6 +777,20 @@ Content
         const result = await mcpModule.readMcpConfig('agents')
         assert.ok(result)
         assert.deepEqual(result.data, {})
+      }),
+    )
+
+    it(
+      'rejects a config that is valid JSON but not an object',
+      withTempDir(async () => {
+        const configPath = join(process.env.HOME, '.agents', 'mcp.json')
+        mkdirSync(join(process.env.HOME, '.agents'), { recursive: true })
+        writeFileSync(configPath, '"not an object"')
+
+        await assert.rejects(
+          () => mcpModule.readMcpConfig('agents'),
+          (error) => error.userCode === 'MCP_CONFIG_INVALID',
+        )
       }),
     )
   })

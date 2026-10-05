@@ -45,12 +45,50 @@ export function getSupportedMcpAgents() {
 export async function readMcpConfig(agent) {
   const configPath = getMcpConfigPath(agent)
   if (!configPath) return null
+  let raw
+
   try {
-    const raw = await readFile(configPath, 'utf-8')
-    return { configPath, data: JSON.parse(raw) }
-  } catch {
+    raw = await readFile(configPath, 'utf-8')
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      throw new UserError(
+        `Could not read the MCP config file at ${configPath}: ${error.message}`,
+        {
+          suggestion:
+            'Check the file permissions, or move the file aside to start with a new MCP config.',
+          code: 'MCP_CONFIG_UNREADABLE',
+        },
+      )
+    }
     return { configPath, data: {} }
   }
+
+  let data
+  try {
+    data = JSON.parse(raw)
+  } catch (error) {
+    throw new UserError(
+      `The MCP config file at ${configPath} is not valid JSON: ${error.message}`,
+      {
+        suggestion:
+          'Fix the JSON, move the file aside, or restore it from a backup before installing MCP servers.',
+        code: 'MCP_CONFIG_CORRUPT',
+      },
+    )
+  }
+
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    throw new UserError(
+      `The MCP config file at ${configPath} must contain a JSON object`,
+      {
+        suggestion:
+          'Replace it with a JSON object, move it aside, or restore it from a backup before installing MCP servers.',
+        code: 'MCP_CONFIG_INVALID',
+      },
+    )
+  }
+
+  return { configPath, data }
 }
 
 function setMcpServerEntry(data, agent, name, serverConfig) {
