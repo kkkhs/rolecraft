@@ -5,6 +5,7 @@ import { mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { apiDoctor } from './doctor.js'
+import { computeContentHash } from '../utils/lockfile.js'
 
 let tempDir
 let originalHome
@@ -96,5 +97,56 @@ describe('api doctor', () => {
           check.label === 'Conflict detection' && check.status === 'pass',
       ),
     )
+  })
+
+  it('matches normalized slugs and agent-specific skill locations', async () => {
+    const globalSkillFiles = {
+      'SKILL.md': '---\nname: My Skill\n---\n\nBody\n',
+      'run.sh': '#!/bin/sh\n',
+    }
+    const globalSkillDir = join(tempDir, '.agents', 'skills', 'acme-my-skill')
+    await mkdir(globalSkillDir, { recursive: true })
+    for (const [name, content] of Object.entries(globalSkillFiles)) {
+      await writeFile(join(globalSkillDir, name), content)
+    }
+
+    const claudeSkillFiles = {
+      'SKILL.md': '---\nname: Claude Skill\n---\n\nBody\n',
+    }
+    const claudeSkillDir = join(
+      tempDir,
+      '.claude',
+      'skills',
+      'acme-claude-skill',
+    )
+    await mkdir(claudeSkillDir, { recursive: true })
+    for (const [name, content] of Object.entries(claudeSkillFiles)) {
+      await writeFile(join(claudeSkillDir, name), content)
+    }
+
+    await writeGlobalLock({
+      version: 3,
+      skills: {
+        'acme/my-skill': {
+          slug: 'acme/my-skill',
+          agents: ['agents'],
+          contentSha: computeContentHash(globalSkillFiles),
+        },
+        'acme/claude-skill': {
+          slug: 'acme/claude-skill',
+          agents: ['claude'],
+          contentSha: computeContentHash(claudeSkillFiles),
+        },
+      },
+      dismissed: {},
+      lastSelectedAgents: [],
+    })
+
+    const result = await apiDoctor(tempDir)
+
+    assert.equal(result.skills.orphaned, 0)
+    assert.equal(result.skills.missingDirs, 0)
+    assert.equal(result.skills.hashMismatches, 0)
+    assert.equal(result.skills.verified, 2)
   })
 })
