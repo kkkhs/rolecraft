@@ -149,4 +149,52 @@ describe('api doctor', () => {
     assert.equal(result.skills.hashMismatches, 0)
     assert.equal(result.skills.verified, 2)
   })
+
+  it('resolves project-scoped agent skill dirs from the api cwd', async () => {
+    const projectDir = join(tempDir, 'api-cwd-project')
+    const otherDir = join(tempDir, 'other-cwd')
+    const skillFiles = {
+      'SKILL.md': '---\nname: Devin Skill\n---\n\nBody\n',
+    }
+    const skillDir = join(projectDir, '.devin', 'skills', 'acme-devin-skill')
+    await mkdir(skillDir, { recursive: true })
+    await mkdir(otherDir, { recursive: true })
+    for (const [name, content] of Object.entries(skillFiles)) {
+      await writeFile(join(skillDir, name), content)
+    }
+    await writeGlobalLock({
+      version: 3,
+      skills: {},
+      dismissed: {},
+      lastSelectedAgents: [],
+    })
+    await mkdir(join(projectDir, '.agents'), { recursive: true })
+    await writeFile(
+      join(projectDir, '.agents', '.skill-lock.json'),
+      JSON.stringify({
+        version: 3,
+        skills: {
+          'acme/devin-skill': {
+            slug: 'acme/devin-skill',
+            agents: ['devin'],
+            contentSha: computeContentHash(skillFiles),
+          },
+        },
+        dismissed: {},
+        lastSelectedAgents: [],
+      }),
+    )
+
+    const originalCwd = process.cwd()
+    process.chdir(otherDir)
+    try {
+      const result = await apiDoctor(projectDir)
+
+      assert.equal(result.skills.missingDirs, 0)
+      assert.equal(result.skills.hashMismatches, 0)
+      assert.equal(result.skills.verified, 1)
+    } finally {
+      process.chdir(originalCwd)
+    }
+  })
 })

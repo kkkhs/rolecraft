@@ -285,7 +285,7 @@ function lockEntrySkillDirs(slug, entry, cwd) {
 
   for (const agent of recordedAgents) {
     if (agent === 'project') addDir(join(cwd, '.agents', 'skills'))
-    else addDir(getDirForAgent(agent))
+    else addDir(getDirForAgent(agent, cwd))
   }
 
   if (dirs.length === 0) {
