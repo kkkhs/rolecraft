@@ -193,6 +193,10 @@ describe('api doctor', () => {
       assert.equal(result.skills.missingDirs, 0)
       assert.equal(result.skills.hashMismatches, 0)
       assert.equal(result.skills.verified, 1)
+      assert.equal(
+        result.agents.find((a) => a.flag === 'devin')?.dir,
+        join(projectDir, '.devin', 'skills'),
+      )
     } finally {
       process.chdir(originalCwd)
     }

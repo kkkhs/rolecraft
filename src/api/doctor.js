@@ -454,7 +454,7 @@ export async function apiDoctor(cwd = process.cwd(), options = {}) {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   }
 
-  const detected = detectAgents()
+  const detected = detectAgents(cwd)
   const totalAgents = agents.length
   const detectedResults = []
 
@@ -465,7 +465,7 @@ export async function apiDoctor(cwd = process.cwd(), options = {}) {
       `${detected.length}/${totalAgents} supported agents detected`,
     )
     for (const agent of detected) {
-      const dir = agent.dir()
+      const dir = agent.dir(cwd)
       const skillCount = countAgentSkills(dir)
       detectedResults.push({
         flag: agent.flag,
